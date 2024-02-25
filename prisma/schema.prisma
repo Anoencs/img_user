@@ -1,0 +1,15 @@
+generator client {
+  provider = "cargo prisma"
+  output   = "../src/prisma.rs"
+}
+
+datasource db {
+  provider = "mongodb"
+  url      = env("DATABASE_URL")
+}
+
+model ImgOnUser {
+  id      String   @id @default(auto()) @map("_id") @db.ObjectId
+  user_id      String    
+  cid     String
+}
