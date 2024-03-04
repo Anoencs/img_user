@@ -101,7 +101,6 @@ fn check_aws_region(aws_region: &str) -> Result<(), ValidationError> {
 
 pub fn setup_cors() -> CorsLayer {
     CorsLayer::new()
-        .allow_credentials(true)
         .allow_origin(Any)
         .allow_headers([
             ORIGIN,
