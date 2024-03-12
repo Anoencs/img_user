@@ -1,6 +1,9 @@
 use crate::{
-    img_user::model::{request::ImgQueryRequest, response::ImgResposne},
-    prisma::{self, img_on_user},
+    img_user::model::{
+        request::ImgQueryRequest,
+        response::{ImgResposne, UserCollectionSelect},
+    },
+    prisma::{self, collection},
 };
 use axum::{
     extract::{Path, State},
@@ -47,7 +50,7 @@ pub fn get_cids() -> Router<AppState> {
         ImgQueryRequest {
             offset,
             limit,
-            user_id,
+            collection_id,
         }: ImgQueryRequest,
     ) -> WebResult {
         let offset = offset.unwrap_or(0);
@@ -62,10 +65,10 @@ pub fn get_cids() -> Router<AppState> {
 
         let mut filters = vec![];
 
-        filters.push(img_on_user::user_id::equals(user_id));
+        filters.push(collection::collection_id::equals(collection_id));
 
         let cids: Vec<ImgResposne> = user_service
-            .get_img_user(offset, limit, filters)
+            .get_img_collection(offset, limit, filters)
             .await?
             .into_iter()
             .map(|u| u.into())
@@ -75,3 +78,13 @@ pub fn get_cids() -> Router<AppState> {
     Router::new().route("/", get(get_cids_handler))
 }
 
+pub fn get_colelction() -> Router<AppState> {
+    async fn get_collection_handler(
+        State(AppState { user_service, .. }): State<AppState>,
+        Path(user_id): Path<String>,
+    ) -> WebResult {
+        let collection: UserCollectionSelect = user_service.get_collection(user_id).await?;
+        Ok(WebResponse::ok("Get cids successfully", collection))
+    }
+    Router::new().route("/:user_id", get(get_collection_handler))
+}

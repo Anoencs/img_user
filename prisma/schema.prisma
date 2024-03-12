@@ -8,8 +8,12 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
-model ImgOnUser {
-  id      String   @id @default(auto()) @map("_id") @db.ObjectId
-  user_id      String    
-  cid     String
+
+
+model Collection {
+  id                 String            @id @default(auto()) @map("_id") @db.ObjectId
+  collection_id      String            @unique
+  name               String
+  cids               String[]
+  user_id            String @unique
 }

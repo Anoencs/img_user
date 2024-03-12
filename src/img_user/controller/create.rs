@@ -1,7 +1,7 @@
 use axum::{extract::State, routing::post, Router};
 
 use crate::{
-    img_user::model::{request::CreateUserImgRequest, response::UserResponse},
+    img_user::model::{request::CreateUserCollectionRequest, response::UserResponse},
     response::WebResponse,
     state::AppState,
     WebResult,
@@ -34,22 +34,25 @@ use crate::{
 //     ),
 //   )
 // )]
-pub fn create_user_img() -> Router<AppState> {
-    async fn create_user_img_handler(
+pub fn create_user_collection() -> Router<AppState> {
+    async fn create_user_collection_handler(
         State(AppState { user_service, .. }): State<AppState>,
-        CreateUserImgRequest { user_id, cid }: CreateUserImgRequest,
+        CreateUserCollectionRequest {
+            user_id,
+            name_collection,
+        }: CreateUserCollectionRequest,
     ) -> WebResult {
         let mut params = vec![];
 
-        let new_user_img: UserResponse = user_service
-            .create_img_user(user_id, cid, params)
+        let new_user_collection: UserResponse = user_service
+            .create_collection(user_id, name_collection, params)
             .await?
             .into();
 
         Ok(WebResponse::created(
             "Created user img sucessfully",
-            UserResponse::from(new_user_img),
+            UserResponse::from(new_user_collection),
         ))
     }
-    Router::new().route("/create", post(create_user_img_handler))
+    Router::new().route("/create", post(create_user_collection_handler))
 }

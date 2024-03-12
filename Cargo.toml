@@ -26,3 +26,4 @@ dotenvy = "0.15.7"
 dotenv = "0.15.0"
 tokio-util = { version = "0.7.10", features = ["io"] }
 tokio = {version = "1.36.0", features = ["rt-multi-thread", "macros"]}
+nanoid = "0.4.0"

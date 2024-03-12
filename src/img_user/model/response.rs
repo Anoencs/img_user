@@ -1,14 +1,16 @@
-use crate::prisma::img_on_user;
+use crate::prisma::collection;
 use serde::{Deserialize, Serialize};
 
-img_on_user::select!(img_on_user_select{
+collection::select!(collection_select{
+     name
+     collection_id
      user_id
-     cid
+     cids
 });
 
-pub type UserImgSelect = img_on_user_select::Data;
+pub type UserCollectionSelect = collection_select::Data;
 
-img_on_user::select!(img_select { cid });
+collection::select!(img_select { cids });
 
 pub type ImgSelect = img_select::Data;
 
@@ -16,23 +18,35 @@ pub type ImgSelect = img_select::Data;
 #[serde(rename_all = "camelCase")]
 pub struct UserResponse {
     pub user_id: String,
-    pub cid: String,
+    pub collection_id: String,
+    pub name: String,
 }
 
-impl From<UserImgSelect> for UserResponse {
+impl From<UserCollectionSelect> for UserResponse {
     fn from(
-        UserImgSelect{user_id, cid}: UserImgSelect
+        UserCollectionSelect {
+            user_id,
+            name,
+            collection_id,
+            cids,
+        }: UserCollectionSelect,
     ) -> Self {
-        Self{user_id, cid}
+        Self {
+            user_id,
+            name,
+            collection_id,
+        }
     }
 }
 
 #[derive(Serialize, Deserialize)]
 #[serde(rename_all = "camelCase")]
-pub struct ImgResposne {pub cid: String}
+pub struct ImgResposne {
+    pub cids: Vec<String>,
+}
 
 impl From<ImgSelect> for ImgResposne {
-    fn from(ImgSelect{cid}: ImgSelect) -> Self {
-        Self{cid}
+    fn from(ImgSelect { cids }: ImgSelect) -> Self {
+        Self { cids }
     }
 }
